@@ -2144,7 +2144,7 @@ export const Bot = (botProps: BotProps & { class?: string }) => {
         cleanupTTSStreaming();
       };
 
-      const errorHandler = (event: Event) => {
+      const errorHandler = (event: Event | string) => {
         console.error('Audio error during TTS playback:', event);
         setIsTTSLoading((prev) => {
           const newState = { ...prev };
@@ -2159,10 +2159,10 @@ export const Bot = (botProps: BotProps & { class?: string }) => {
         cleanupTTSStreaming();
       };
 
-      mediaSource.addEventListener('sourceopen', sourceOpenHandler);
-      audio.addEventListener('playing', playingHandler);
-      audio.addEventListener('ended', endedHandler);
-      audio.addEventListener('error', errorHandler);
+      mediaSource.onsourceopen = sourceOpenHandler;
+      audio.onplaying = playingHandler;
+      audio.onended = endedHandler;
+      audio.onerror = errorHandler;
     } catch (error) {
       console.error('Error initializing TTS streaming:', error);
       // Ensure cleanup on initialization error
@@ -2190,8 +2190,9 @@ export const Bot = (botProps: BotProps & { class?: string }) => {
         URL.revokeObjectURL(currentState.audio.src);
       }
       // Remove all event listeners
-      currentState.audio.removeEventListener('playing', () => console.log('Playing'));
-      currentState.audio.removeEventListener('ended', () => console.log('Ended'));
+      currentState.audio.onplaying = null;
+      currentState.audio.onended = null;
+      currentState.audio.onerror = null;
     }
 
     if (currentState.sourceBuffer) {
@@ -2235,7 +2236,7 @@ export const Bot = (botProps: BotProps & { class?: string }) => {
         }
       }
       // Remove source open event listeners
-      currentState.mediaSource.removeEventListener('sourceopen', () => console.log('removed source open event listener'));
+      currentState.mediaSource.onsourceopen = null;
     }
 
     setTtsStreamingState({
