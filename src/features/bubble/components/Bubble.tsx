@@ -1,4 +1,4 @@
-import { createSignal, Show, splitProps, onCleanup, createEffect, onMount } from 'solid-js';
+import { createSignal, Show, splitProps, onCleanup, onMount } from 'solid-js';
 import styles from '../../../assets/index.css';
 import { BubbleButton } from './BubbleButton';
 import { BubbleParams } from '../types';
@@ -88,15 +88,15 @@ export const Bubble = (props: BubbleProps) => {
   };
 
   // Add viewport meta tag dynamically
-  createEffect(() => {
+  onMount(() => {
     const meta = document.createElement('meta');
     meta.name = 'viewport';
     meta.content = 'width=device-width, initial-scale=1.0, interactive-widget=resizes-content';
     document.head.appendChild(meta);
 
-    return () => {
+    onCleanup(() => {
       document.head.removeChild(meta);
-    };
+    });
   });
 
   const showTooltip = bubbleProps.theme?.tooltip?.showTooltip ?? false;
