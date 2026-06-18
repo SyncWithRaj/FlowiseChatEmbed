@@ -95,7 +95,7 @@ export const Bubble = (props: BubbleProps) => {
     document.head.appendChild(meta);
 
     onCleanup(() => {
-      document.head.removeChild(meta);
+      meta.remove();
     });
   });
 
